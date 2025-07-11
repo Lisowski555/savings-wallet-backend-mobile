@@ -12,32 +12,34 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 class SecurityConfig(
-        val jwtFilter: JwtFilter,
+    val jwtFilter: JwtFilter,
 ) {
     @Bean
     fun filterChain(http: HttpSecurity) = http
-            .csrf(Customizer.withDefaults())
-            .authorizeHttpRequests{ it
-                    .requestMatchers("/auth/**").permitAll()
-                    .anyRequest().authenticated()
-            }
-            .sessionManagement{ it
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            }
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter::class.java)
-            .build()
+        .csrf { it.disable() } // ← WYŁĄCZTŁEM CSRF!.csrf(Customizer.withDefaults())
+        .authorizeHttpRequests {
+            it
+                .requestMatchers("/auth/**").permitAll()
+                .anyRequest().authenticated()
+        }
+        .sessionManagement {
+            it
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        }
+        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter::class.java)
+        .build()
 
     @Bean
     fun authManager(
-            http: HttpSecurity,
-            passwordEncoder: PasswordEncoder,
-            userDetailsService: SpringSecurityUserDetailsService
+        http: HttpSecurity,
+        passwordEncoder: PasswordEncoder,
+        userDetailsService: SpringSecurityUserDetailsService
     ) = http
-            .getSharedObject(AuthenticationManagerBuilder::class.java)
-            .userDetailsService(userDetailsService)
-            .passwordEncoder(passwordEncoder)
-            .and()
-            .build()
+        .getSharedObject(AuthenticationManagerBuilder::class.java)
+        .userDetailsService(userDetailsService)
+        .passwordEncoder(passwordEncoder)
+        .and()
+        .build()
 
     @Bean
     fun passwordEncoder() = BCryptPasswordEncoder()
