@@ -14,7 +14,7 @@ class MongoDbSavingsWalletRepo(
         val springSavingsWalletRepo: SpringMongoDbSavingsWalletRepo,
 ) : SavingsWalletRepo {
     override fun findSavingsWalletByUserId(userId: Id<User>) = springSavingsWalletRepo
-            .findByUserId(userId.id.toString())
+            .findByUserId(userId.value.toString())
             ?.toDomain(clock)
 
     override fun saveSavingsWallet(savingsWallet: SavingsWallet) = savingsWallet.toEntity()

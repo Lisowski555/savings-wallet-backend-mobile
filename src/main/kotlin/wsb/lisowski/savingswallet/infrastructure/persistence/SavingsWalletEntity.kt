@@ -32,8 +32,8 @@ data class SavingsWalletEntity(
 }
 
 fun SavingsWallet.toEntity() = SavingsWalletEntity(
-        id = id.id.toString(),
-        userId = userId.id.toString(),
+        id = id.value.toString(),
+        userId = userId.value.toString(),
         savingsAccounts = savingsAccounts.map { it.toEntity() },
         savingsDeposits = savingsDeposits.map { it.toEntity() },
         createdAt = created,
@@ -42,6 +42,7 @@ fun SavingsWallet.toEntity() = SavingsWalletEntity(
 
 data class SavingsAccountEntity(
         @Id val id: String,
+        val title: String,
         val amount: BigDecimal,
         val currency: Currency,
         val rate: BigDecimal,
@@ -50,18 +51,20 @@ data class SavingsAccountEntity(
 ) {
     fun toDomain(): SavingsAccount = SavingsAccount(
             id = id<SavingsAccount>(UUID.fromString(id)),
+            title = title,
             amount = Money(amount, currency),
-            rate,
+            rate = rate,
             created = createdAt,
             updated = updatedAt,
     )
 }
 
 fun SavingsAccount.toEntity() = SavingsAccountEntity(
-        id = id.toString(),
+        id = id.value.toString(),
+        title = title,
         amount = amount.amount,
         currency = amount.currency,
-        rate,
+        rate = rate,
         createdAt = created,
         updatedAt = updated
 )

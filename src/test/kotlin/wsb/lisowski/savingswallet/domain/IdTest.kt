@@ -10,7 +10,7 @@ class IdTest {
     fun `different classes with same uuids does not equal`() {
         // given
         val id1 = randomId<SavingsDeposit>()
-        val id2 = id<SavingsAccount>(id1.id)
+        val id2 = id<SavingsAccount>(id1.value)
 
         // when / then
         assert(id1 != id2) { "Id should be different for different classes" }
@@ -20,7 +20,7 @@ class IdTest {
     fun `same classes with the same uuids equal`() {
         // given
         val id1 = randomId<SavingsDeposit>()
-        val id2 = id<SavingsDeposit>(id1.id)
+        val id2 = id<SavingsDeposit>(id1.value)
 
         // when / then
         assert(id1 == id2) { "Id should be the same for the same classes" }

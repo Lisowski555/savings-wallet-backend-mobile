@@ -20,7 +20,7 @@ data class UserEntity(
 }
 
 fun User.toEntity() = UserEntity(
-        id = id.id.toString(),
+        id = id.value.toString(),
         username,
         password
 )
