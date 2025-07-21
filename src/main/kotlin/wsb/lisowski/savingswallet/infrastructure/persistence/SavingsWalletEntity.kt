@@ -18,7 +18,7 @@ data class SavingsWalletEntity(
         val savingsAccounts: List<SavingsAccountEntity>,
         val savingsDeposits: List<SavingsDepositEntity>,
         val createdAt: LocalDateTime,
-        val updatedAt: LocalDateTime,
+        val updatedAt: LocalDateTime
 ) {
     fun toDomain(clock: Clock) = SavingsWallet(
             id = id<SavingsWallet>(UUID.fromString(id)),
@@ -27,7 +27,7 @@ data class SavingsWalletEntity(
             savingsDeposits = savingsDeposits.map { it.toDomain() },
             created = createdAt,
             updated = updatedAt,
-            clock,
+            clock
     )
 }
 
@@ -37,7 +37,7 @@ fun SavingsWallet.toEntity() = SavingsWalletEntity(
         savingsAccounts = savingsAccounts.map { it.toEntity() },
         savingsDeposits = savingsDeposits.map { it.toEntity() },
         createdAt = created,
-        updatedAt = updated,
+        updatedAt = updated
 )
 
 data class SavingsAccountEntity(
@@ -47,7 +47,7 @@ data class SavingsAccountEntity(
         val currency: Currency,
         val rate: BigDecimal,
         val createdAt: LocalDateTime,
-        val updatedAt: LocalDateTime,
+        val updatedAt: LocalDateTime
 ) {
     fun toDomain(): SavingsAccount = SavingsAccount(
             id = id<SavingsAccount>(UUID.fromString(id)),
@@ -55,7 +55,7 @@ data class SavingsAccountEntity(
             amount = Money(amount, currency),
             rate = rate,
             created = createdAt,
-            updated = updatedAt,
+            updated = updatedAt
     )
 }
 
@@ -71,29 +71,32 @@ fun SavingsAccount.toEntity() = SavingsAccountEntity(
 
 data class SavingsDepositEntity(
         @Id val id: String,
+        val title: String,
         val amount: BigDecimal,
         val currency: Currency,
         val rate: BigDecimal,
         val endDate: LocalDate,
         val createdAt: LocalDateTime,
-        val updatedAt: LocalDateTime,
+        val updatedAt: LocalDateTime
 ) {
     fun toDomain(): SavingsDeposit = SavingsDeposit(
-            id = id(UUID.fromString(id)),
+            id = id<SavingsDeposit>(UUID.fromString(id)),
+            title = title,
             amount = Money(amount, currency),
             rate = rate,
             endDate = endDate,
             created = createdAt,
-            updated = updatedAt,
+            updated = updatedAt
     )
 }
 
 fun SavingsDeposit.toEntity() = SavingsDepositEntity(
-        id = id.toString(),
+        id = id.value.toString(),
+        title = title,
         amount = amount.amount,
         currency = amount.currency,
         rate = rate,
         endDate = endDate,
         createdAt = created,
-        updatedAt = updated,
+        updatedAt = updated
 )

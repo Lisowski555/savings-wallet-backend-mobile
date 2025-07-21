@@ -93,6 +93,7 @@ class WalletController(
 
         val newDeposit = SavingsDeposit(
             id = Id.randomId(),
+            title = dto.title,
             amount = Money(BigDecimal(dto.amount), dto.currency),
             rate = BigDecimal(dto.rate),
             endDate = LocalDate.parse(dto.endDate),
@@ -126,6 +127,7 @@ class WalletController(
 
     private fun SavingsDeposit.toResponse() = SavingsDepositResponse(
         id = this.id.value.toString(),
+        title = title,
         amount = amount,
         rate = rate,
         endDate = endDate,
@@ -147,6 +149,7 @@ class WalletController(
 
     data class SavingsDepositResponse(
         val id: String,
+        val title: String,
         val amount: Money,
         val rate: BigDecimal,
         val endDate: LocalDate,

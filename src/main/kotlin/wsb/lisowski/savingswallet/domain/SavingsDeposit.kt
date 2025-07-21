@@ -6,6 +6,7 @@ import java.time.LocalDateTime
 
 data class SavingsDeposit(
         val id: Id<SavingsDeposit>,
+        val title: String,
         val amount: Money,
         val rate: BigDecimal,
         val endDate: LocalDate,
