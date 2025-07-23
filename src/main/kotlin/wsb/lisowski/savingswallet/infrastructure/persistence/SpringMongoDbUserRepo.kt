@@ -7,14 +7,14 @@ import wsb.lisowski.savingswallet.domain.User
 
 @Repository
 class MongoDbUserRepo(
-        val springUserRepo: SpringMongoDbUserRepo
+    val springUserRepo: SpringMongoDbUserRepo
 ) : UserRepo {
     override fun findUserByUsername(username: String) = springUserRepo.findByUsername(username)
-            ?.toDomain()
+        ?.toDomain()
 
     override fun saveUser(user: User) = user.toEntity()
-            .apply { springUserRepo.save(this) }
-            .toDomain()
+        .apply { springUserRepo.save(this) }
+        .toDomain()
 }
 
 interface SpringMongoDbUserRepo : MongoRepository<UserEntity, String> {

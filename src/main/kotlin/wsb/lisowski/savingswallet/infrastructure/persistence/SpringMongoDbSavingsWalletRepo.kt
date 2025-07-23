@@ -10,16 +10,16 @@ import java.time.Clock
 
 @Repository
 class MongoDbSavingsWalletRepo(
-        val clock: Clock,
-        val springSavingsWalletRepo: SpringMongoDbSavingsWalletRepo,
+    val clock: Clock,
+    val springSavingsWalletRepo: SpringMongoDbSavingsWalletRepo,
 ) : SavingsWalletRepo {
     override fun findSavingsWalletByUserId(userId: Id<User>) = springSavingsWalletRepo
-            .findByUserId(userId.value.toString())
-            ?.toDomain(clock)
+        .findByUserId(userId.value.toString())
+        ?.toDomain(clock)
 
     override fun saveSavingsWallet(savingsWallet: SavingsWallet) = savingsWallet.toEntity()
-            .apply { springSavingsWalletRepo.save(this) }
-            .toDomain(clock)
+        .apply { springSavingsWalletRepo.save(this) }
+        .toDomain(clock)
 }
 
 interface SpringMongoDbSavingsWalletRepo : MongoRepository<SavingsWalletEntity, String> {

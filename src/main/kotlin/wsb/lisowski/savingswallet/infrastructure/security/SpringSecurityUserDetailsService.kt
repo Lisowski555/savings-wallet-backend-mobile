@@ -9,7 +9,7 @@ import wsb.lisowski.savingswallet.infrastructure.security.SpringSecurityUserDeta
 
 @Component
 class SpringSecurityUserDetailsService(
-        val userRepo: UserRepo,
+    val userRepo: UserRepo,
 ) : UserDetailsService {
 
     companion object {
@@ -17,11 +17,11 @@ class SpringSecurityUserDetailsService(
     }
 
     override fun loadUserByUsername(username: String) = userRepo.findUserByUsername(username)
-            ?.toSecurity("")
-            ?: throw UsernameNotFoundException("User not found")
+        ?.toSecurity("")
+        ?: throw UsernameNotFoundException("User not found")
 }
 
 fun wsb.lisowski.savingswallet.domain.User.toSecurity(password: String) = User.withUsername(username)
-        .password(password)
-        .roles(AUTHENTICATED_ROLE)
-        .build()
+    .password(password)
+    .roles(AUTHENTICATED_ROLE)
+    .build()

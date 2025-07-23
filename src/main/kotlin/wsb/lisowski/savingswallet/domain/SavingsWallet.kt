@@ -27,4 +27,42 @@ data class SavingsWallet(
             updated = now(clock)
         )
     }
+
+    fun updateSavingsAccount(updated: SavingsAccount): SavingsWallet {
+        val newAccounts = savingsAccounts.map {
+            if (it.id == updated.id) updated else it
+        }
+        return copy(
+            savingsAccounts = newAccounts,
+            updated = now(clock)
+        )
+    }
+
+    // Deleting account by ID
+    fun removeSavingsAccount(accountId: Id<SavingsAccount>): SavingsWallet {
+        return copy(
+            savingsAccounts = savingsAccounts.filter { it.id != accountId },
+            updated = now(clock)
+        )
+    }
+
+    // Editing deposit
+    fun updateSavingsDeposit(updated: SavingsDeposit): SavingsWallet {
+        val newDeposits = savingsDeposits.map {
+            if (it.id == updated.id) updated else it
+        }
+        return copy(
+            savingsDeposits = newDeposits,
+            updated = now(clock)
+        )
+    }
+
+    // Deleting deposit by ID
+    fun deleteSavingsDeposit(depositId: Id<SavingsDeposit>): SavingsWallet {
+        val newDeposits = savingsDeposits.filter { it.id != depositId }
+        return copy(
+            savingsDeposits = newDeposits,
+            updated = now(clock)
+        )
+    }
 }

@@ -35,7 +35,6 @@ class WalletController(
         val currency: Currency = Currency.PLN
     )
 
-    /** Pobierz portfel użytkownika (na razie na sztywno test/test123) */
     @GetMapping
     fun getWallet(@RequestHeader("Authorization") authHeader: String): ResponseEntity<SavingsWalletResponse> {
         val username = extractUsername(authHeader)
@@ -54,7 +53,6 @@ class WalletController(
         return ResponseEntity.ok(wallet.toResponse())
     }
 
-    /** Dodaj nowe konto oszczędnościowe do portfela */
     @PostMapping("/accounts")
     fun addAccount(
         @RequestHeader("Authorization") authHeader: String,
@@ -79,7 +77,6 @@ class WalletController(
         return ResponseEntity.ok(updatedWallet.toResponse())
     }
 
-    /** Dodaj nową lokatę do portfela */
     @PostMapping("/deposits")
     fun addDeposit(
         @RequestHeader("Authorization") authHeader: String,
@@ -105,7 +102,94 @@ class WalletController(
         return ResponseEntity.ok(updatedWallet.toResponse())
     }
 
-    /** Pobierz nazwę użytkownika z nagłówka Authorization: Bearer ... */
+    @PutMapping("/accounts/{id}")
+    fun updateAccount(
+        @RequestHeader("Authorization") authHeader: String,
+        @PathVariable id: String,
+        @RequestBody dto: AccountDto
+    ): ResponseEntity<SavingsWalletResponse> {
+        val username = extractUsername(authHeader)
+        val user = userRepo.findUserByUsername(username)
+            ?: return ResponseEntity.status(404).build()
+        val wallet = walletRepo.findSavingsWalletByUserId(user.id)
+            ?: return ResponseEntity.status(404).build()
+        val accountId = Id.id<SavingsAccount>(java.util.UUID.fromString(id))
+        val existing = wallet.savingsAccounts.find { it.id == accountId }
+            ?: return ResponseEntity.status(404).build()
+        val updatedAccount = existing.copy(
+            title = dto.title,
+            amount = Money(BigDecimal(dto.amount), dto.currency),
+            rate = BigDecimal(dto.rate),
+            updated = LocalDateTime.now(clock)
+        )
+        val updatedWallet = wallet.updateSavingsAccount(updatedAccount)
+        walletRepo.saveSavingsWallet(updatedWallet)
+        return ResponseEntity.ok(updatedWallet.toResponse())
+    }
+
+    // ENDPOINT: DELETING savings accounts
+    @DeleteMapping("/accounts/{id}")
+    fun deleteAccount(
+        @RequestHeader("Authorization") authHeader: String,
+        @PathVariable id: String
+    ): ResponseEntity<SavingsWalletResponse> {
+        val username = extractUsername(authHeader)
+        val user = userRepo.findUserByUsername(username)
+            ?: return ResponseEntity.status(404).build()
+        val wallet = walletRepo.findSavingsWalletByUserId(user.id)
+            ?: return ResponseEntity.status(404).build()
+        val accountId = Id.id<SavingsAccount>(java.util.UUID.fromString(id))
+        val exists = wallet.savingsAccounts.any { it.id == accountId }
+        if (!exists) return ResponseEntity.status(404).build()
+        val updatedWallet = wallet.removeSavingsAccount(accountId)
+        walletRepo.saveSavingsWallet(updatedWallet)
+        return ResponseEntity.ok(updatedWallet.toResponse())
+    }
+
+    // Editing and deleting savings deposits
+
+    @PutMapping("/deposits/{id}")
+    fun updateDeposit(
+        @RequestHeader("Authorization") authHeader: String,
+        @PathVariable id: String,
+        @RequestBody dto: DepositDto
+    ): ResponseEntity<SavingsWalletResponse> {
+        val username = extractUsername(authHeader)
+        val user = userRepo.findUserByUsername(username)
+            ?: return ResponseEntity.status(404).build()
+        val wallet = walletRepo.findSavingsWalletByUserId(user.id)
+            ?: return ResponseEntity.status(404).build()
+        val depositId = Id.id<SavingsDeposit>(java.util.UUID.fromString(id))
+        val existing = wallet.savingsDeposits.find { it.id == depositId }
+            ?: return ResponseEntity.status(404).build()
+        val updatedDeposit = existing.copy(
+            title = dto.title,
+            amount = Money(BigDecimal(dto.amount), dto.currency),
+            rate = BigDecimal(dto.rate),
+            endDate = LocalDate.parse(dto.endDate),
+            updated = LocalDateTime.now(clock)
+        )
+        val updatedWallet = wallet.updateSavingsDeposit(updatedDeposit)
+        walletRepo.saveSavingsWallet(updatedWallet)
+        return ResponseEntity.ok(updatedWallet.toResponse())
+    }
+
+    @DeleteMapping("/deposits/{id}")
+    fun deleteDeposit(
+        @RequestHeader("Authorization") authHeader: String,
+        @PathVariable id: String
+    ): ResponseEntity<SavingsWalletResponse> {
+        val username = extractUsername(authHeader)
+        val user = userRepo.findUserByUsername(username)
+            ?: return ResponseEntity.status(404).build()
+        val wallet = walletRepo.findSavingsWalletByUserId(user.id)
+            ?: return ResponseEntity.status(404).build()
+        val depositId = Id.id<SavingsDeposit>(java.util.UUID.fromString(id))
+        val updatedWallet = wallet.deleteSavingsDeposit(depositId)
+        walletRepo.saveSavingsWallet(updatedWallet)
+        return ResponseEntity.ok(updatedWallet.toResponse())
+    }
+
     private fun extractUsername(authHeader: String): String {
         val token = authHeader.removePrefix("Bearer").trim()
         return jwtService.extractUsername(token)

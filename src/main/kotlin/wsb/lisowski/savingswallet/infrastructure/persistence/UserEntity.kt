@@ -8,19 +8,19 @@ import java.util.*
 
 @Document("users")
 data class UserEntity(
-        @Id val id: String,
-        val username: String,
-        val password: String,
+    @Id val id: String,
+    val username: String,
+    val password: String,
 ) {
     fun toDomain() = User(
-            id = id(UUID.fromString(id)),
-            username,
-            password
+        id = id(UUID.fromString(id)),
+        username,
+        password
     )
 }
 
 fun User.toEntity() = UserEntity(
-        id = id.value.toString(),
-        username,
-        password
+    id = id.value.toString(),
+    username,
+    password
 )

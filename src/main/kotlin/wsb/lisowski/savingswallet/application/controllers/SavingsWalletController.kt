@@ -1,13 +1,3 @@
-//package wsb.lisowski.savingswallet.application.controllers
-//
-//import org.springframework.web.bind.annotation.RequestMapping
-//import org.springframework.web.bind.annotation.RestController
-//
-//@RestController
-//@RequestMapping("/auth")
-//class SavingsWalletController {
-//}
-
 package wsb.lisowski.savingswallet.application.controllers
 
 import org.springframework.http.ResponseEntity
@@ -25,7 +15,7 @@ class SavingsWalletController(
 
     @PostMapping("/login")
     fun login(@RequestBody request: LoginRequest): ResponseEntity<LoginResponse> {
-        // Testowy użytkownik (na sztywno)
+        // Testowy użytkownik
         val validUser = "test"
         val validPass = "test123"
 

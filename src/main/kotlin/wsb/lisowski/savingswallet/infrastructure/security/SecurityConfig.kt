@@ -16,7 +16,7 @@ class SecurityConfig(
 ) {
     @Bean
     fun filterChain(http: HttpSecurity) = http
-        .csrf { it.disable() } // ← WYŁĄCZTŁEM CSRF!.csrf(Customizer.withDefaults())
+        .csrf { it.disable() } // ← Turned OFF CSRF!.csrf(Customizer.withDefaults())
         .authorizeHttpRequests {
             it
                 .requestMatchers("/auth/**").permitAll()

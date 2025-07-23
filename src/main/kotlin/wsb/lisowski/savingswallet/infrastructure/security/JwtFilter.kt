@@ -11,8 +11,8 @@ import java.util.*
 
 @Component
 class JwtFilter(
-        val jwtService: JwtService,
-        val userDetailsService: SpringSecurityUserDetailsService,
+    val jwtService: JwtService,
+    val userDetailsService: SpringSecurityUserDetailsService,
 ) : OncePerRequestFilter() {
 
     companion object {
@@ -20,7 +20,11 @@ class JwtFilter(
         const val BEARER = "Bearer"
     }
 
-    override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
+    override fun doFilterInternal(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        filterChain: FilterChain
+    ) {
         val authHeader = request.getHeader(AUTH_HEADER);
         if (Objects.nonNull(authHeader) && authHeader.startsWith(BEARER)) {
             val jwt = authHeader.substring(7)
